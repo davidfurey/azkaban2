@@ -62,7 +62,6 @@ public class FlowRunner extends EventHandler implements Runnable {
 	
 	// Properties map
 	private Map<String, Props> sharedProps = new HashMap<String, Props>();
-	private Map<String, Props> jobOutputProps = new HashMap<String, Props>();
 	
 	private Props globalProps;
 	private Props commonProps;
@@ -440,7 +439,7 @@ public class FlowRunner extends EventHandler implements Runnable {
 		Props previousOutput = null;
 		// Iterate the in nodes again and create the dependencies
 		for (String dependency : node.getInNodes()) {
-			Props output = jobOutputProps.get(dependency);
+			Props output = flow.getExecutableNode(dependency).getOutputProps();
 			if (output != null) {
 				output = Props.clone(output);
 				output.setParent(previousOutput);
@@ -736,7 +735,6 @@ public class FlowRunner extends EventHandler implements Runnable {
 					logger.info("Job Finished " + node.getJobId() + " with status " + node.getStatus());
 					if (runner.getOutputProps() != null) {
 						logger.info("Job " + node.getJobId() + " had output props.");
-						jobOutputProps.put(node.getJobId(), runner.getOutputProps());
 					}
 					
 					updateFlow();
